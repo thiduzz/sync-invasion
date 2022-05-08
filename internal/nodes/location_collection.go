@@ -1,6 +1,9 @@
 package nodes
 
-import "github.com/thiduzz/code-kata-invasion/tools"
+import (
+	"github.com/thiduzz/code-kata-invasion/tools"
+	"sort"
+)
 
 type LocationCollection struct {
 	Collection   map[uint]*Location
@@ -38,6 +41,7 @@ func (lc *LocationCollection) GetUndestroyed() []uint {
 			locations = append(locations, location.GetId())
 		}
 	}
+	sort.Slice(locations, func(i, j int) bool { return locations[i] < locations[j] })
 	return locations
 }
 
@@ -47,8 +51,8 @@ func (lc *LocationCollection) GetRandom(randomizer *tools.Randomizer) *Location 
 	if len(undestroyed) <= 0 {
 		return nil
 	}
-	randomizer.Shuffle(len(undestroyed), func(i, j int) {
-		undestroyed[uint(i)], undestroyed[uint(i)] = undestroyed[uint(i)], undestroyed[uint(i)]
-	})
+	if randomizer != nil {
+		randomizer.ShuffleUint(undestroyed)
+	}
 	return lc.GetById(undestroyed[0])
 }

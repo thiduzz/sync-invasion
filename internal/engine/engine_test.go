@@ -6,7 +6,6 @@ import (
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	mock_nodes "github.com/thiduzz/code-kata-invasion/internal/mock/nodes"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
-	"github.com/thiduzz/code-kata-invasion/tools"
 	"reflect"
 	"testing"
 )
@@ -100,8 +99,7 @@ func TestEngine_PrepareAttackers(t *testing.T) {
 
 func TestEngine_attack(t *testing.T) {
 	type fields struct {
-		Locations      *nodes.LocationCollection
-		randomizerFunc func() *tools.Randomizer
+		Locations *nodes.LocationCollection
 	}
 	type args struct {
 		attacker *nodes.Attacker
@@ -118,9 +116,6 @@ func TestEngine_attack(t *testing.T) {
 			name: "should error when retrieved attacker is dead",
 			fields: fields{
 				Locations: nil,
-				randomizerFunc: func() *tools.Randomizer {
-					return tools.NewRandomizer(10)
-				},
 			},
 			args: args{
 				attacker: &nodes.Attacker{
@@ -139,9 +134,6 @@ func TestEngine_attack(t *testing.T) {
 			name: "should error when retrieved attacker is trapped",
 			fields: fields{
 				Locations: nil,
-				randomizerFunc: func() *tools.Randomizer {
-					return tools.NewRandomizer(10)
-				},
 			},
 			args: args{
 				attacker: &nodes.Attacker{
@@ -160,11 +152,6 @@ func TestEngine_attack(t *testing.T) {
 			name: "should return random new location when attacker has none (on attacker first iteration)",
 			fields: fields{
 				Locations: nodes.NewLocationFactory(func() string { return "test" }).Seed(10),
-				randomizerFunc: func() *tools.Randomizer {
-					random := tools.NewRandomizer(10)
-					random.PreventReseed(true)
-					return random
-				},
 			},
 			args: args{
 				attacker: &nodes.Attacker{
@@ -174,7 +161,7 @@ func TestEngine_attack(t *testing.T) {
 				},
 			},
 			want: &nodes.Location{
-				Id:                 4,
+				Id:                 1,
 				Name:               "test",
 				DirectionsOutBound: nodes.Directions{Roads: nodes.NewDirectionCompass()},
 				DirectionsInBound:  nodes.Directions{Roads: nodes.NewDirectionCompass()},
@@ -189,11 +176,6 @@ func TestEngine_attack(t *testing.T) {
 					10,
 					destroyedOption,
 				),
-				randomizerFunc: func() *tools.Randomizer {
-					random := tools.NewRandomizer(10)
-					random.PreventReseed(true)
-					return random
-				},
 			},
 			args: args{
 				attacker: &nodes.Attacker{
@@ -209,8 +191,7 @@ func TestEngine_attack(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			en := &Engine{
-				Locations:  tt.fields.Locations,
-				Randomizer: tt.fields.randomizerFunc(),
+				Locations: tt.fields.Locations,
 			}
 			got, err := en.attack(tt.args.attacker)
 			if (err != nil) != tt.wantErr {

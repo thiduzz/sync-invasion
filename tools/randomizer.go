@@ -34,9 +34,18 @@ func (rm *Randomizer) RandomName() string {
 	return fmt.Sprintf("%s %s", caseType.String(gofakeit.AdjectiveDescriptive()), gofakeit.PetName())
 }
 
+func (rm *Randomizer) ShuffleUint(slice []uint) {
+	if rm == nil || rm.preventReseed {
+		return
+	}
+	rm.Rand.Shuffle(len(slice), func(i, j int) {
+		slice[uint(i)], slice[uint(i)] = slice[uint(i)], slice[uint(i)]
+	})
+}
+
 //Reseed Ensure that randomizer has a different entropy
 func (rm *Randomizer) Reseed() {
-	if rm.preventReseed {
+	if rm == nil || rm.preventReseed {
 		return
 	}
 	rm.Seed(time.Now().UnixMilli())
