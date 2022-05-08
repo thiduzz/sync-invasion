@@ -24,7 +24,15 @@ func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attac
 	}
 }
 
+//Start This function defines the loop which will be running workers and locations
+// according to the specification - which is "👾👾 Alien Invasion 👾👾"
 func (en *Engine) Start() error {
+	for iterations := uint(0); iterations < en.MaxMoves; iterations++ {
+		orderOfAttack := en.Attackers.Sort(en.EntropyRandomizer)
+		for _, attackerIdentifier := range orderOfAttack {
+
+		}
+	}
 	return nil
 }
 
