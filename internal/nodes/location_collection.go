@@ -47,6 +47,8 @@ func (lc *LocationCollection) GetRandom(randomizer *tools.Randomizer) *Location 
 	if len(undestroyed) <= 0 {
 		return nil
 	}
-	randomKey := randomizer.Intn(len(undestroyed))
-	return lc.GetById(uint(randomKey))
+	randomizer.Shuffle(len(undestroyed), func(i, j int) {
+		undestroyed[uint(i)], undestroyed[uint(i)] = undestroyed[uint(i)], undestroyed[uint(i)]
+	})
+	return lc.GetById(undestroyed[0])
 }
