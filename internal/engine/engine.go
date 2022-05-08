@@ -46,7 +46,18 @@ func (en *Engine) Start() error {
 	return nil
 }
 
-func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, error) {
+//PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
+func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error {
+	for i := uint(1); i <= en.AttackersQty; i++ {
+		attacker, err := factory.Generate(nodes.Attacker{}, i)
+		if err != nil {
+			return errors.NewEngineErrorWrap(errors.AttackerFactory, err)
+		}
+		en.Attackers.Add(attacker)
+	}
+	return nil
+}
+
 //attack define the target that the current attacker will invade
 func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, *nodes.Location, error) {
 	//abort if the attacker is dead (no-action)
@@ -74,17 +85,14 @@ func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, *nodes.Loca
 	return newLocation, originalLocation, nil
 }
 
-//PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
-func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error {
-	for i := uint(1); i <= en.AttackersQty; i++ {
-		attacker, err := factory.Generate(nodes.Attacker{}, i)
-		if err != nil {
-			return errors.NewEngineErrorWrap(errors.AttackerFactory, err)
+//invade start attacking a location by
+func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
+	if target != nil {
+		//start invading new location
+		if en.attacksInProgress[target.GetId()] == constant.EmptyCity {
+			//Did not find anyone - come in
 		}
-		en.Attackers.Add(attacker)
 	}
-	return nil
-}
 
 func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
 
