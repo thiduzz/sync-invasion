@@ -1,11 +1,15 @@
 package nodes
 
 type LocationCollection struct {
-	collection map[string]*Location
+	collection map[uint]*Location
 }
 
 func NewLocationCollection() *LocationCollection {
 	return &LocationCollection{
-		collection: make(map[string]*Location),
+		collection: make(map[uint]*Location),
 	}
+}
+
+func (l *LocationCollection) Add(location Location) {
+	l.collection[location.GetId()] = &location
 }
