@@ -21,6 +21,18 @@ func main() {
 	if err != nil {
 		throwError(err, flags)
 	}
+
+	if err := validateInput(mapFilePath); err != nil {
+		throwError(err, flags)
+	}
+	log.Printf("%d %d", alientQty, maxMoves)
+}
+
+func validateInput(path *string) error {
+	if *path == "" {
+		return localError.NewCommandError(constant.MapFilePathParameter, "invalid file name")
+	}
+	return nil
 }
 
 func throwError(err error, flags *flag.FlagSet) {
