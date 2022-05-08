@@ -25,7 +25,7 @@ func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 
 		pieces := strings.Split(scanner.Text(), " ")
 
-		if len(pieces) == 0 {
+		if len(pieces) == 0 || (len(pieces) == 1 && pieces[0] == "") {
 			return nil, errors.NewUtilsError("ParseMap", "invalid row in parsed file")
 		}
 
