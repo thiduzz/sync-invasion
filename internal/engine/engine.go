@@ -3,17 +3,25 @@ package engine
 import (
 	"github.com/thiduzz/code-kata-invasion/internal/errors"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
+	"math/rand"
 )
 
 type Engine struct {
-	Locations    *nodes.LocationCollection
-	Attackers    *nodes.AttackerCollection
-	AttackersQty uint
-	MaxMoves     uint
+	Locations         *nodes.LocationCollection
+	Attackers         *nodes.AttackerCollection
+	EntropyRandomizer *rand.Rand
+	AttackersQty      uint
+	MaxMoves          uint
 }
 
-func NewEngine(locations *nodes.LocationCollection, attackersQty uint, maxMoves uint) *Engine {
-	return &Engine{Locations: locations, AttackersQty: attackersQty, MaxMoves: maxMoves, Attackers: nodes.NewAttackerCollection()}
+func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attackersQty uint, maxMoves uint) *Engine {
+	return &Engine{
+		Locations:         locations,
+		AttackersQty:      attackersQty,
+		MaxMoves:          maxMoves,
+		Attackers:         nodes.NewAttackerCollection(),
+		EntropyRandomizer: randomizer,
+	}
 }
 
 func (en *Engine) Start() error {

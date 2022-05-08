@@ -10,6 +10,7 @@ import (
 	"github.com/thiduzz/code-kata-invasion/internal/utils"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -32,7 +33,8 @@ func main() {
 	if err != nil {
 		throwError(err, flags)
 	}
-	engineExecutor := engine.NewEngine(locations, *attackerQty, *maxMoves)
+	entropyGenerator := utils.GenerateRandomizer(time.Now().UnixMilli())
+	engineExecutor := engine.NewEngine(locations, entropyGenerator, *attackerQty, *maxMoves)
 	engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(utils.GenerateRandomName))
 	if err := engineExecutor.Start(); err != nil {
 		throwError(err, flags)
