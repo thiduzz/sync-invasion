@@ -110,6 +110,7 @@ func TestEngine_attack(t *testing.T) {
 		fields  fields
 		args    args
 		want    *nodes.Location
+		want1   *nodes.Location
 		wantErr bool
 	}{
 		{
@@ -128,6 +129,7 @@ func TestEngine_attack(t *testing.T) {
 				},
 			},
 			want:    nil,
+			want1:   nil,
 			wantErr: true,
 		},
 		{
@@ -146,6 +148,7 @@ func TestEngine_attack(t *testing.T) {
 				},
 			},
 			want:    nil,
+			want1:   nil,
 			wantErr: true,
 		},
 		{
@@ -167,6 +170,7 @@ func TestEngine_attack(t *testing.T) {
 				DirectionsInBound:  nodes.Directions{Roads: nodes.NewDirectionCompass()},
 				State:              map[constant.LocationState]bool{},
 			},
+			want1:   nil,
 			wantErr: false,
 		},
 		{
@@ -185,6 +189,7 @@ func TestEngine_attack(t *testing.T) {
 				},
 			},
 			want:    nil,
+			want1:   nil,
 			wantErr: true,
 		},
 	}
@@ -193,13 +198,16 @@ func TestEngine_attack(t *testing.T) {
 			en := &Engine{
 				Locations: tt.fields.Locations,
 			}
-			got, err := en.attack(tt.args.attacker)
+			got, got1, err := en.attack(tt.args.attacker)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("attack() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("attack() got = %v, want %v", got, tt.want)
+			}
+			if !reflect.DeepEqual(got1, tt.want1) {
+				t.Errorf("attack() got1 = %v, want1 %v", got1, tt.want1)
 			}
 		})
 	}
