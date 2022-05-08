@@ -35,11 +35,15 @@ func (en *Engine) Start() error {
 		for _, attackerIdentifier := range orderOfAttack {
 			attacker := en.Attackers.GetById(attackerIdentifier)
 			//method responsible for acquiring the target and evaluating attackers state ("health")
-			target, err := en.attack(attacker)
+			target, originalLocation, err := en.attack(attacker)
 			if err != nil {
 				return err
 			}
-			//method responsible for occupying the location
+			//stop invading current location
+			if originalLocation != nil && en.attacksInProgress[originalLocation.GetId()] == attacker.GetId() {
+				delete(en.attacksInProgress, originalLocation.GetId())
+			}
+			//start invading new location
 			en.invade(attacker, target)
 		}
 	}
