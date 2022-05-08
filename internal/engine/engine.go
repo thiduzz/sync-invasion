@@ -34,12 +34,21 @@ func (en *Engine) Start() error {
 		orderOfAttack := en.Attackers.Sort(en.Randomizer)
 		for _, attackerIdentifier := range orderOfAttack {
 			attacker := en.Attackers.GetById(attackerIdentifier)
+			err := en.Attack(attacker)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
 
-			//check if it needs to initialize the attacker in a location
-			if attacker.Location == nil && !attacker.IsDead() {
-				//add entropy to the starting city definition
-				en.reseedRandom()
-				if location := en.Locations.GetRandom(en.Randomizer); location == nil {
+func (en *Engine) Attack(attacker *nodes.Attacker) error {
+	//check if it needs to initialize the attacker in a location
+	if attacker.Location == nil && !attacker.IsDead() {
+		//add entropy to the starting city definition
+		en.reseedRandom()
+		if location := en.Locations.GetRandom(en.Randomizer); location == nil {
 
 				}
 			}
