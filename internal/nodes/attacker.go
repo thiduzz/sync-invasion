@@ -20,3 +20,11 @@ func (at *Attacker) GetId() uint {
 func (at *Attacker) GetName() string {
 	return at.Name
 }
+
+func (at *Attacker) IsDead() bool {
+	return at.State[constant.Dead]
+}
+
+func (at *Attacker) IsTrapped() bool {
+	return at.State[constant.Trapped]
+}

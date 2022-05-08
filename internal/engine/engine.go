@@ -33,7 +33,16 @@ func (en *Engine) Start() error {
 		en.reseedRandom()
 		orderOfAttack := en.Attackers.Sort(en.Randomizer)
 		for _, attackerIdentifier := range orderOfAttack {
-			
+			attacker := en.Attackers.GetById(attackerIdentifier)
+
+			//check if it needs to initialize the attacker in a location
+			if attacker.Location == nil && !attacker.IsDead() {
+				//add entropy to the starting city definition
+				en.reseedRandom()
+				if location := en.Locations.GetRandom(en.Randomizer); location == nil {
+
+				}
+			}
 		}
 	}
 	return nil
