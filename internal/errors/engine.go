@@ -9,7 +9,9 @@ type EngineErrorType uint8
 
 const (
 	General EngineErrorType = iota
-	AlienFactory
+	AttackerFactory
+	AttackerDead
+	AttackerTrapped
 	EndOfTheWorld
 )
 
