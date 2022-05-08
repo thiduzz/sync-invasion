@@ -34,7 +34,7 @@ func (en *Engine) Start() error {
 		orderOfAttack := en.Attackers.Sort(en.Randomizer)
 		for _, attackerIdentifier := range orderOfAttack {
 			attacker := en.Attackers.GetById(attackerIdentifier)
-			err := en.Attack(attacker)
+			err := en.attack(attacker)
 			if err != nil {
 				return err
 			}
@@ -43,9 +43,18 @@ func (en *Engine) Start() error {
 	return nil
 }
 
-func (en *Engine) Attack(attacker *nodes.Attacker) error {
+func (en *Engine) attack(attacker *nodes.Attacker) error {
+	//abort if the attacker is dead (no-action)
+	if attacker.IsDead() {
+		return errors.NewEngineErrorOp(errors.AttackerDead)
+	}
+	//abort if the attacker is trapped (no-action)
+	if attacker.IsTrapped() {
+		return errors.NewEngineErrorOp(errors.AttackerTrapped)
+	}
+
 	//check if it needs to initialize the attacker in a location
-	if attacker.Location == nil && !attacker.IsDead() {
+	if attacker.Location == nil {
 		//add entropy to the starting city definition
 		en.reseedRandom()
 		if location := en.Locations.GetRandom(en.Randomizer); location == nil {
@@ -60,7 +69,7 @@ func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error
 	for i := uint(1); i <= en.AttackersQty; i++ {
 		attacker, err := factory.Generate(nodes.Attacker{}, i)
 		if err != nil {
-			return errors.NewEngineErrorWrap(errors.AlienFactory, err)
+			return errors.NewEngineErrorWrap(errors.AttackerFactory, err)
 		}
 		en.Attackers.Add(attacker)
 	}
