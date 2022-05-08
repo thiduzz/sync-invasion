@@ -7,6 +7,7 @@ import (
 type AttackerCollection struct {
 	Collection   map[uint]*Attacker
 	ReferenceMap map[string]uint
+	keys         []uint
 }
 
 func NewAttackerCollection() *AttackerCollection {
@@ -19,6 +20,7 @@ func NewAttackerCollection() *AttackerCollection {
 func (ac *AttackerCollection) Add(attacker *Attacker) {
 	ac.Collection[attacker.GetId()] = attacker
 	ac.ReferenceMap[attacker.GetName()] = attacker.GetId()
+	ac.keys = append(ac.keys, attacker.GetId())
 }
 
 func (ac *AttackerCollection) GetById(id uint) *Attacker {
@@ -37,4 +39,8 @@ func (ac *AttackerCollection) GetByName(name string) *Attacker {
 // different order in most iterations - it accepts a randomizer that
 // enable a better control over the undeterministic behavior while testing
 func (ac *AttackerCollection) Sort(randomizer *rand.Rand) []uint {
+	randomizer.Shuffle(len(ac.keys), func(i, j int) {
+		ac.keys[i], ac.keys[j] = ac.keys[j], ac.keys[i]
+	})
+	return ac.keys
 }
