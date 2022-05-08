@@ -57,7 +57,6 @@ func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 			}
 			location.DirectionsOutBound.Add(direction, neighboringLocation, false)
 			location.DirectionsInBound.Add(direction, neighboringLocation, false)
-			neighboringLocation.DirectionsOutBound.Add(direction, location, true)
 			neighboringLocation.DirectionsInBound.Add(direction, location, true)
 		}
 		id++
