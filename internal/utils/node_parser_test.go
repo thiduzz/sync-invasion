@@ -16,7 +16,22 @@ func TestParseNodes(t *testing.T) {
 		want    *nodes.LocationCollection
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "should return error when provided path is empty",
+			args: args{
+				filePath: ptrStr(""),
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "should return error when file does not exist",
+			args: args{
+				filePath: ptrStr("/doesnt-exist"),
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -30,4 +45,8 @@ func TestParseNodes(t *testing.T) {
 			}
 		})
 	}
+}
+
+func ptrStr(value string) *string {
+	return &value
 }
