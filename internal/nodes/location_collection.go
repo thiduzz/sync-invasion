@@ -1,9 +1,8 @@
 package nodes
 
-import "log"
-
 type LocationCollection struct {
-	Collection map[uint]*Location
+	Collection   map[uint]*Location
+	referenceMap map[string]uint
 }
 
 func NewLocationCollection() *LocationCollection {
@@ -12,13 +11,18 @@ func NewLocationCollection() *LocationCollection {
 	}
 }
 
-func (lc *LocationCollection) Add(location Location) {
-	lc.Collection[location.GetId()] = &location
+func (lc *LocationCollection) Add(location *Location) {
+	lc.Collection[location.GetId()] = location
+	lc.referenceMap[location.GetName()] = location.GetId()
 }
 
-func (lc *LocationCollection) ParseDirections() error {
-	for _, location := range lc.Collection {
-		log.Println(location)
+func (lc *LocationCollection) GetById(id uint) *Location {
+	return lc.Collection[id]
+}
+
+func (lc *LocationCollection) GetByName(name string) *Location {
+	if referenceId, exists := lc.referenceMap[name]; exists {
+		return lc.Collection[referenceId]
 	}
 	return nil
 }
