@@ -9,6 +9,8 @@ const (
 	DirectionWest  = "west"
 )
 
+const EmptyCity uint = 0
+
 const (
 	Destroyed LocationState = iota
 )
