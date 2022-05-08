@@ -49,9 +49,7 @@ func (en *Engine) Attack(attacker *nodes.Attacker) error {
 		//add entropy to the starting city definition
 		en.reseedRandom()
 		if location := en.Locations.GetRandom(en.Randomizer); location == nil {
-
-				}
-			}
+			return errors.NewEngineErrorOp(errors.EndOfTheWorld)
 		}
 	}
 	return nil
@@ -62,7 +60,7 @@ func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error
 	for i := uint(1); i <= en.AttackersQty; i++ {
 		attacker, err := factory.Generate(nodes.Attacker{}, i)
 		if err != nil {
-			return errors.NewEngineErrorWrap("alienFactory", err)
+			return errors.NewEngineErrorWrap(errors.AlienFactory, err)
 		}
 		en.Attackers.Add(attacker)
 	}
