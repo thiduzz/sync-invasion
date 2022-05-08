@@ -2,18 +2,19 @@ package nodes
 
 type LocationCollection struct {
 	Collection   map[uint]*Location
-	referenceMap map[string]uint
+	ReferenceMap map[string]uint
 }
 
 func NewLocationCollection() *LocationCollection {
 	return &LocationCollection{
-		Collection: make(map[uint]*Location),
+		Collection:   make(map[uint]*Location),
+		ReferenceMap: map[string]uint{},
 	}
 }
 
 func (lc *LocationCollection) Add(location *Location) {
 	lc.Collection[location.GetId()] = location
-	lc.referenceMap[location.GetName()] = location.GetId()
+	lc.ReferenceMap[location.GetName()] = location.GetId()
 }
 
 func (lc *LocationCollection) GetById(id uint) *Location {
@@ -21,7 +22,7 @@ func (lc *LocationCollection) GetById(id uint) *Location {
 }
 
 func (lc *LocationCollection) GetByName(name string) *Location {
-	if referenceId, exists := lc.referenceMap[name]; exists {
+	if referenceId, exists := lc.ReferenceMap[name]; exists {
 		return lc.Collection[referenceId]
 	}
 	return nil
