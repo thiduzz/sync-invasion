@@ -40,7 +40,3 @@ func Test_validateInput(t *testing.T) {
 func ptrStr(value string) *string {
 	return &value
 }
-
-func ptrUint(value uint) *uint {
-	return &value
-}
