@@ -3,31 +3,24 @@ package nodes
 import "github.com/thiduzz/code-kata-invasion/internal/constant"
 
 type Location struct {
-	Id         uint
-	Name       string
-	State      map[constant.LocationState]bool
-	Directions Directions
-}
-
-type Directions struct {
-	Roads     map[string]*Location
-	Blueprint []string
-}
-
-var DefaultDirections = map[string]*Location{
-	constant.DirectionNorth: nil,
-	constant.DirectionSouth: nil,
-	constant.DirectionWest:  nil,
-	constant.DirectionEast:  nil,
+	Id                 uint
+	Name               string
+	State              map[constant.LocationState]bool
+	DirectionsOutBound Directions
+	DirectionsInBound  Directions
 }
 
 func NewLocation(id uint, name string) *Location {
-	return Location{
+	return &Location{
 		Id:   id,
 		Name: name,
-		Directions: Directions{
-			Roads: DefaultDirections,
-		}}
+		DirectionsOutBound: Directions{
+			Roads: NewDirectionCompass(),
+		},
+		DirectionsInBound: Directions{
+			Roads: NewDirectionCompass(),
+		},
+	}
 }
 
 type LocationInterface interface {
