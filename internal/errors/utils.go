@@ -14,6 +14,10 @@ func NewUtilsError(op string, message string) *UtilsError {
 	return &UtilsError{Op: op, Err: errors.New(message)}
 }
 
+func NewUtilsErrorWrap(op string, err error) *UtilsError {
+	return &UtilsError{Op: op, Err: err}
+}
+
 func (e *UtilsError) Error() string {
 	return fmt.Sprintf("%s : %s", e.Op, e.Err.Error())
 }

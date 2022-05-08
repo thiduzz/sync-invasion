@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
 	"reflect"
 	"testing"
@@ -33,12 +34,12 @@ func TestParseNodes(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "should return empty map when provided empty file",
+			name: "should return error when provided empty file",
 			args: args{
 				filePath: ptrStr("../../resources/empty-map.txt"),
 			},
-			want:    nodes.NewLocationCollection(),
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 		{
 			name: "should return error when provided map with empty row",
@@ -58,18 +59,60 @@ func TestParseNodes(t *testing.T) {
 					1: &nodes.Location{
 						Id:   1,
 						Name: "Hamburg",
+						Directions: nodes.Directions{
+							Blueprint: []string{},
+							Roads: map[string]*nodes.Location{
+								constant.DirectionNorth: nil,
+								constant.DirectionSouth: nil,
+								constant.DirectionWest:  nil,
+								constant.DirectionEast:  nil,
+							},
+						},
 					},
 					2: &nodes.Location{
 						Id:   2,
 						Name: "Beijing",
+						Directions: nodes.Directions{
+							Blueprint: []string{
+								"west=Hamburg", "east=Berlin", "north=Bremen",
+							},
+							Roads: map[string]*nodes.Location{
+								constant.DirectionNorth: nil,
+								constant.DirectionSouth: nil,
+								constant.DirectionWest:  nil,
+								constant.DirectionEast:  nil,
+							},
+						},
 					},
 					3: &nodes.Location{
 						Id:   3,
 						Name: "Moscow",
+						Directions: nodes.Directions{
+							Blueprint: []string{
+								"north=Hamburg", "west=Beijing",
+							},
+							Roads: map[string]*nodes.Location{
+								constant.DirectionNorth: nil,
+								constant.DirectionSouth: nil,
+								constant.DirectionWest:  nil,
+								constant.DirectionEast:  nil,
+							},
+						},
 					},
 					4: &nodes.Location{
 						Id:   4,
 						Name: "Bremen",
+						Directions: nodes.Directions{
+							Blueprint: []string{
+								"south=Hamburg",
+							},
+							Roads: map[string]*nodes.Location{
+								constant.DirectionNorth: nil,
+								constant.DirectionSouth: nil,
+								constant.DirectionWest:  nil,
+								constant.DirectionEast:  nil,
+							},
+						},
 					},
 				},
 			},

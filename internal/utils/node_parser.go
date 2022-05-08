@@ -31,8 +31,12 @@ func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 		}
 
 		cityName := pieces[0]
-		cities.Add(nodes.NewLocation(id, cityName))
+		cities.Add(nodes.NewLocation(id, cityName, pieces[1:]))
 		id++
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, errors.NewUtilsErrorWrap("ParseMap", err)
 	}
 
 	return cities, nil
