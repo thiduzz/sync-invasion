@@ -17,18 +17,20 @@ type AttackerInterface interface {
 	IsDead() bool
 	IsTrapped() bool
 	Attack(*Location)
+	Die()
+	Trapped()
 }
 
 func NewAttacker(id uint, nameGeneratorFunc func() string) *Attacker {
-	return &Attacker{Id: id, Name: nameGeneratorFunc()}
+	return &Attacker{Id: id, Name: nameGeneratorFunc(), State: map[constant.AttackerState]bool{}}
 }
 
-func (at *Attacker) IsDead() bool {
-	return at.State[constant.Dead]
+func (at *Attacker) Die() {
+	at.State[constant.Dead] = true
 }
 
-func (at *Attacker) IsTrapped() bool {
-	return at.State[constant.Trapped]
+func (at *Attacker) Trapped() {
+	at.State[constant.Trapped] = true
 }
 
 func (at *Attacker) Attack(location *Location) {
@@ -41,6 +43,14 @@ func (at *Attacker) GetId() uint {
 
 func (at *Attacker) GetName() string {
 	return at.Name
+}
+
+func (at *Attacker) IsDead() bool {
+	return at.State[constant.Dead]
+}
+
+func (at *Attacker) IsTrapped() bool {
+	return at.State[constant.Trapped]
 }
 
 func (at *Attacker) String() string {
