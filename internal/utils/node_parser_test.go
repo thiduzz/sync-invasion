@@ -37,8 +37,24 @@ func TestParseNodes(t *testing.T) {
 			args: args{
 				filePath: ptrStr("../../resources/world-map.txt"),
 			},
-			want:    nil,
+			want:    nodes.NewLocationCollection(),
 			wantErr: false,
+		},
+		{
+			name: "should return empty map when provided empty file",
+			args: args{
+				filePath: ptrStr("../../resources/empty-map.txt"),
+			},
+			want:    nodes.NewLocationCollection(),
+			wantErr: false,
+		},
+		{
+			name: "should return error when provided map with empty row",
+			args: args{
+				filePath: ptrStr("../../resources/map-with-empty-row.txt"),
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
