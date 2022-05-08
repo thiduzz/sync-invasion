@@ -20,12 +20,14 @@ func NewLocation(id uint, name string) *Location {
 		DirectionsInBound: Directions{
 			Roads: NewDirectionCompass(),
 		},
+		State: map[constant.LocationState]bool{},
 	}
 }
 
 type LocationInterface interface {
 	NodeInterface
 	IsDestroyed() bool
+	SetDestroyed(value bool)
 }
 
 func (l *Location) GetId() uint {
@@ -34,6 +36,10 @@ func (l *Location) GetId() uint {
 
 func (l *Location) GetName() string {
 	return l.Name
+}
+
+func (l *Location) SetDestroyed(value bool) {
+	l.State[constant.Destroyed] = value
 }
 
 func (l *Location) IsDestroyed() bool {

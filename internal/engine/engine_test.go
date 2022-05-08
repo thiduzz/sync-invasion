@@ -2,8 +2,6 @@ package engine
 
 import (
 	"errors"
-	"fmt"
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/golang/mock/gomock"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	mock_nodes "github.com/thiduzz/code-kata-invasion/internal/mock/nodes"
@@ -108,6 +106,7 @@ func TestEngine_attack(t *testing.T) {
 	type args struct {
 		attacker *nodes.Attacker
 	}
+	destroyedOption := &nodes.LocationFactoryOption{Key: constant.Destroyed, Value: true}
 	tests := []struct {
 		name    string
 		fields  fields
@@ -179,8 +178,32 @@ func TestEngine_attack(t *testing.T) {
 				Name:               "test",
 				DirectionsOutBound: nodes.Directions{Roads: nodes.NewDirectionCompass()},
 				DirectionsInBound:  nodes.Directions{Roads: nodes.NewDirectionCompass()},
+				State:              map[constant.LocationState]bool{},
 			},
 			wantErr: false,
+		},
+		{
+			name: "should return error when there are no undestroyed locations",
+			fields: fields{
+				Locations: nodes.NewLocationFactory(func() string { return "test" }).Seed(
+					10,
+					destroyedOption,
+				),
+				randomizerFunc: func() *tools.Randomizer {
+					random := tools.NewRandomizer(10)
+					random.PreventReseed(true)
+					return random
+				},
+			},
+			args: args{
+				attacker: &nodes.Attacker{
+					Id:       1,
+					Name:     "Test",
+					Location: nil,
+				},
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -199,8 +222,4 @@ func TestEngine_attack(t *testing.T) {
 			}
 		})
 	}
-}
-
-func RandomizedNames() string {
-	return fmt.Sprintf("%s %s", gofakeit.UUID(), gofakeit.PetName())
 }

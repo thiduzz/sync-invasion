@@ -1,9 +1,17 @@
 package nodes
 
-import "errors"
+import (
+	"errors"
+	"github.com/thiduzz/code-kata-invasion/internal/constant"
+)
 
 type LocationFactory struct {
 	nameGeneratorFunc func() string
+}
+
+type LocationFactoryOption struct {
+	Key   constant.LocationState
+	Value interface{}
 }
 
 type LocationFactoryInterface interface {
@@ -28,8 +36,9 @@ func (lf LocationFactory) Generate(locationType interface{}, attackerId uint) (*
 	}
 }
 
-//Seed Provideds a random collection of locations of size greater or equal 0
-func (lf LocationFactory) Seed(locationQty int) *LocationCollection {
+//Seed Provideds a random collection of locations of size greater or equal 0,
+// enable the definition of options that apply for the entire set
+func (lf *LocationFactory) Seed(locationQty int, options ...*LocationFactoryOption) *LocationCollection {
 	if locationQty < 0 {
 		return nil
 	}
@@ -39,6 +48,15 @@ func (lf LocationFactory) Seed(locationQty int) *LocationCollection {
 		if err != nil {
 			return nil
 		}
+
+		if len(options) > 0 {
+			for _, option := range options {
+				if option.Key == constant.Destroyed {
+					location.SetDestroyed(option.Value.(bool))
+				}
+			}
+		}
+
 		collection.Add(location)
 	}
 	return collection
