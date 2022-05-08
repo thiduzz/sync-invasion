@@ -1,6 +1,9 @@
 package nodes
 
-import "github.com/thiduzz/code-kata-invasion/internal/constant"
+import (
+	"fmt"
+	"github.com/thiduzz/code-kata-invasion/internal/constant"
+)
 
 type Attacker struct {
 	Id       uint
@@ -38,4 +41,8 @@ func (at *Attacker) GetId() uint {
 
 func (at *Attacker) GetName() string {
 	return at.Name
+}
+
+func (at *Attacker) String() string {
+	return fmt.Sprintf("#%d (%s)", at.GetId(), at.GetName())
 }
