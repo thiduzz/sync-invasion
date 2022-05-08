@@ -1,8 +1,9 @@
 package main
 
 import (
-	"code-kata-invasion/internal/constant"
+	"errors"
 	"flag"
+	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"os"
 )
 
