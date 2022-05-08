@@ -17,7 +17,7 @@ import (
 func main() {
 	var (
 		flags       = flag.NewFlagSet("settings", flag.ExitOnError)
-		mapFilePath = flags.String(constant.MapFilePathParameter, "../../../resources/world-map.txt", "Path of file that represents the map of cities")
+		mapFilePath = flags.String(constant.MapFilePathParameter, "./resources/world-map.txt", "Path of file that represents the map of cities")
 		attackerQty = flags.Uint(constant.AlienQtyParameter, 100, "Total amount of attackers to invade the cities")
 		maxMoves    = flags.Uint(constant.MaxMoves, 10000, "Maximum moves necessary")
 	)
