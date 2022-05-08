@@ -4,7 +4,9 @@ import (
 	"errors"
 	"flag"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
+	"github.com/thiduzz/code-kata-invasion/internal/engine"
 	localError "github.com/thiduzz/code-kata-invasion/internal/errors"
+	"github.com/thiduzz/code-kata-invasion/internal/utils"
 	"log"
 	"os"
 )
@@ -13,7 +15,7 @@ func main() {
 	var (
 		flags       = flag.NewFlagSet("settings", flag.ExitOnError)
 		mapFilePath = flags.String(constant.MapFilePathParameter, "", "Path of file that represents the map of cities")
-		alientQty   = flags.Uint(constant.AlienQtyParameter, 100, "Total amount of aliens to invade")
+		attackerQty = flags.Uint(constant.AlienQtyParameter, 100, "Total amount of attackers to invade the cities")
 		maxMoves    = flags.Uint(constant.MaxMoves, 10000, "Maximum moves necessary")
 	)
 
@@ -25,7 +27,13 @@ func main() {
 	if err := validateInput(mapFilePath); err != nil {
 		throwError(err, flags)
 	}
-	log.Printf("%d %d", alientQty, maxMoves)
+	locations, err := utils.ParseNodes(mapFilePath)
+	if err != nil {
+		throwError(err, flags)
+	}
+	engineExecutor := engine.NewEngine(locations, *attackerQty, *maxMoves)
+
+	engineExecutor.Start()
 }
 
 func validateInput(path *string) error {
