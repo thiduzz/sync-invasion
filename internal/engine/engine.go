@@ -15,3 +15,7 @@ func NewEngine(locations *nodes.LocationCollection, attackersQty uint, maxMoves 
 func (en *Engine) Start() error {
 	return nil
 }
+
+func (en *Engine) PrepareAttackers() {
+
+}

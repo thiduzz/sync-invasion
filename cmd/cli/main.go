@@ -32,8 +32,10 @@ func main() {
 		throwError(err, flags)
 	}
 	engineExecutor := engine.NewEngine(locations, *attackerQty, *maxMoves)
-
-	engineExecutor.Start()
+	engineExecutor.PrepareAttackers()
+	if err := engineExecutor.Start(); err != nil {
+		throwError(err, flags)
+	}
 }
 
 func validateInput(path *string) error {
