@@ -6,6 +6,7 @@ import (
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/internal/engine"
 	localError "github.com/thiduzz/code-kata-invasion/internal/errors"
+	"github.com/thiduzz/code-kata-invasion/internal/nodes"
 	"github.com/thiduzz/code-kata-invasion/internal/utils"
 	"log"
 	"os"
@@ -32,7 +33,7 @@ func main() {
 		throwError(err, flags)
 	}
 	engineExecutor := engine.NewEngine(locations, *attackerQty, *maxMoves)
-	engineExecutor.PrepareAttackers()
+	engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(utils.GenerateRandomName))
 	if err := engineExecutor.Start(); err != nil {
 		throwError(err, flags)
 	}
