@@ -38,7 +38,18 @@ func NewEngineErrorWrap(op EngineErrorType, err error) *EngineError {
 }
 
 func (e *EngineError) Error() string {
-	return fmt.Sprintf("%d : %s", e.Op, e.Err.Error())
+	return fmt.Sprintf("[Engine Operation: %s]: %s", e.Op, e.Err.Error())
 }
 
 func (e *EngineError) Unwrap() error { return e.Err }
+
+func (ee EngineErrorType) String() string {
+
+	switch ee {
+	case EndOfTheWorld:
+		return "WORLD-END"
+	case General:
+		return "GENERAL"
+	}
+	return ""
+}

@@ -2,7 +2,7 @@ package nodes
 
 import (
 	"fmt"
-	"math/rand"
+	"github.com/thiduzz/code-kata-invasion/tools"
 	"reflect"
 	"testing"
 )
@@ -12,7 +12,7 @@ func TestAttackerCollection_Sort(t *testing.T) {
 		Collection func(t *testing.T) *AttackerCollection
 	}
 	type args struct {
-		randomizerFunc func() *rand.Rand
+		randomizerFunc func() *tools.Randomizer
 	}
 	tests := []struct {
 		name   string
@@ -39,9 +39,8 @@ func TestAttackerCollection_Sort(t *testing.T) {
 				},
 			},
 			args: args{
-				randomizerFunc: func() *rand.Rand {
-					source := rand.NewSource(10)
-					return rand.New(source)
+				randomizerFunc: func() *tools.Randomizer {
+					return tools.NewRandomizer(10)
 				},
 			},
 			want: []uint{1, 9, 10, 2, 5, 7, 3, 8, 4, 6},
@@ -65,9 +64,8 @@ func TestAttackerCollection_Sort(t *testing.T) {
 				},
 			},
 			args: args{
-				randomizerFunc: func() *rand.Rand {
-					source := rand.NewSource(11)
-					return rand.New(source)
+				randomizerFunc: func() *tools.Randomizer {
+					return tools.NewRandomizer(11)
 				},
 			},
 			want: []uint{2, 6, 3, 9, 10, 5, 4, 7, 8, 1},
