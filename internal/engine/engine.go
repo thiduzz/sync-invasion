@@ -4,6 +4,7 @@ import (
 	"github.com/thiduzz/code-kata-invasion/internal/errors"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
 	"math/rand"
+	"time"
 )
 
 type Engine struct {
@@ -28,9 +29,11 @@ func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attac
 // according to the specification - which is "👾👾 Alien Invasion 👾👾"
 func (en *Engine) Start() error {
 	for iterations := uint(0); iterations < en.MaxMoves; iterations++ {
+		// Reseed the randomizer with the current time providing a different order
+		en.EntropyRandomizer.Seed(time.Now().UnixMilli())
 		orderOfAttack := en.Attackers.Sort(en.EntropyRandomizer)
 		for _, attackerIdentifier := range orderOfAttack {
-
+			
 		}
 	}
 	return nil
