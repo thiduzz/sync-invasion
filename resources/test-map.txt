@@ -1,0 +1,4 @@
+Hamburg
+Beijing north=Osaka west=Hannover east=Berlin south=Warsaw
+Moscow north=Hamburg west=Bremen south=Osaka east=Zurich
+Bremen south=Hamburg

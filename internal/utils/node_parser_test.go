@@ -33,14 +33,6 @@ func TestParseNodes(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "should be able to read existing file",
-			args: args{
-				filePath: ptrStr("../../resources/world-map.txt"),
-			},
-			want:    nodes.NewLocationCollection(),
-			wantErr: false,
-		},
-		{
 			name: "should return empty map when provided empty file",
 			args: args{
 				filePath: ptrStr("../../resources/empty-map.txt"),
@@ -55,6 +47,33 @@ func TestParseNodes(t *testing.T) {
 			},
 			want:    nil,
 			wantErr: true,
+		},
+		{
+			name: "should be able to read existing file",
+			args: args{
+				filePath: ptrStr("../../resources/test-map.txt"),
+			},
+			want: &nodes.LocationCollection{
+				Collection: map[uint]*nodes.Location{
+					1: &nodes.Location{
+						Id:   1,
+						Name: "Hamburg",
+					},
+					2: &nodes.Location{
+						Id:   2,
+						Name: "Beijing",
+					},
+					3: &nodes.Location{
+						Id:   3,
+						Name: "Moscow",
+					},
+					4: &nodes.Location{
+						Id:   4,
+						Name: "Bremen",
+					},
+				},
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

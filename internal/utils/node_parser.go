@@ -21,6 +21,7 @@ func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 	defer file.Close()
 	cities := nodes.NewLocationCollection()
 	scanner := bufio.NewScanner(file)
+	id := uint(1)
 	for scanner.Scan() {
 
 		pieces := strings.Split(scanner.Text(), " ")
@@ -29,6 +30,9 @@ func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 			return nil, errors.NewUtilsError("ParseMap", "invalid row in parsed file")
 		}
 
+		cityName := pieces[0]
+		cities.Add(nodes.NewLocation(id, cityName))
+		id++
 	}
 
 	return cities, nil
