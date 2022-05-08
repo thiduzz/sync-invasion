@@ -8,20 +8,20 @@ import (
 )
 
 type Engine struct {
-	Locations         *nodes.LocationCollection
-	Attackers         *nodes.AttackerCollection
-	EntropyRandomizer *rand.Rand
-	AttackersQty      uint
-	MaxMoves          uint
+	Locations    *nodes.LocationCollection
+	Attackers    *nodes.AttackerCollection
+	Randomizer   *rand.Rand
+	AttackersQty uint
+	MaxMoves     uint
 }
 
 func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attackersQty uint, maxMoves uint) *Engine {
 	return &Engine{
-		Locations:         locations,
-		AttackersQty:      attackersQty,
-		MaxMoves:          maxMoves,
-		Attackers:         nodes.NewAttackerCollection(),
-		EntropyRandomizer: randomizer,
+		Locations:    locations,
+		AttackersQty: attackersQty,
+		MaxMoves:     maxMoves,
+		Attackers:    nodes.NewAttackerCollection(),
+		Randomizer:   randomizer,
 	}
 }
 
@@ -29,9 +29,9 @@ func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attac
 // according to the specification - which is "👾👾 Alien Invasion 👾👾"
 func (en *Engine) Start() error {
 	for iterations := uint(0); iterations < en.MaxMoves; iterations++ {
-		// Reseed the randomizer with the current time providing a different order
-		en.EntropyRandomizer.Seed(time.Now().UnixMilli())
-		orderOfAttack := en.Attackers.Sort(en.EntropyRandomizer)
+		//add entropy to the attacker order
+		en.reseedRandom()
+		orderOfAttack := en.Attackers.Sort(en.Randomizer)
 		for _, attackerIdentifier := range orderOfAttack {
 			
 		}
@@ -49,4 +49,9 @@ func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error
 		en.Attackers.Add(attacker)
 	}
 	return nil
+}
+
+//reseedRandom Reseed the randomizer with the current time providing a different entropy
+func (en *Engine) reseedRandom() {
+	en.Randomizer.Seed(time.Now().UnixMilli())
 }
