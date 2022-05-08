@@ -34,34 +34,42 @@ func (en *Engine) Start() error {
 		orderOfAttack := en.Attackers.Sort(en.Randomizer)
 		for _, attackerIdentifier := range orderOfAttack {
 			attacker := en.Attackers.GetById(attackerIdentifier)
-			err := en.attack(attacker)
+			//method responsible for acquiring the target and evaluating attackers state ("health")
+			target, err := en.attack(attacker)
 			if err != nil {
 				return err
 			}
+			//method responsible for occupying the location
+			en.invade(attacker, target)
 		}
 	}
 	return nil
 }
 
-func (en *Engine) attack(attacker *nodes.Attacker) error {
+func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, error) {
 	//abort if the attacker is dead (no-action)
 	if attacker.IsDead() {
-		return errors.NewEngineErrorOp(errors.AttackerDead)
+		return nil, errors.NewEngineErrorOp(errors.AttackerDead)
 	}
 	//abort if the attacker is trapped (no-action)
 	if attacker.IsTrapped() {
-		return errors.NewEngineErrorOp(errors.AttackerTrapped)
+		return nil, errors.NewEngineErrorOp(errors.AttackerTrapped)
 	}
+	var newLocation *nodes.Location
 
 	//check if it needs to initialize the attacker in a location
 	if attacker.Location == nil {
 		//add entropy to the starting city definition
 		en.reseedRandom()
-		if location := en.Locations.GetRandom(en.Randomizer); location == nil {
-			return errors.NewEngineErrorOp(errors.EndOfTheWorld)
+		newLocation = en.Locations.GetRandom(en.Randomizer)
+		if newLocation == nil {
+			return nil, errors.NewEngineErrorOp(errors.EndOfTheWorld)
 		}
+	} else {
+		//TODO: pick a city to attack from the outbound routes
 	}
-	return nil
+	attacker.Attack(newLocation)
+	return newLocation, nil
 }
 
 //PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
@@ -79,4 +87,8 @@ func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error
 //reseedRandom Reseed the randomizer with the current time providing a different entropy
 func (en *Engine) reseedRandom() {
 	en.Randomizer.Seed(time.Now().UnixMilli())
+}
+
+func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
+
 }
