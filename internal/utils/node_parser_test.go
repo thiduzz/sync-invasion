@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
 	"reflect"
 	"testing"
@@ -14,7 +13,7 @@ func TestParseNodes(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *nodes.LocationCollection
+		want    func() *nodes.LocationCollection
 		wantErr bool
 	}{
 		{
@@ -22,7 +21,7 @@ func TestParseNodes(t *testing.T) {
 			args: args{
 				filePath: ptrStr(""),
 			},
-			want:    nil,
+			want:    func() *nodes.LocationCollection { return nil },
 			wantErr: true,
 		},
 		{
@@ -30,7 +29,7 @@ func TestParseNodes(t *testing.T) {
 			args: args{
 				filePath: ptrStr("/doesnt-exist"),
 			},
-			want:    nil,
+			want:    func() *nodes.LocationCollection { return nil },
 			wantErr: true,
 		},
 		{
@@ -38,7 +37,7 @@ func TestParseNodes(t *testing.T) {
 			args: args{
 				filePath: ptrStr("../../resources/empty-map.txt"),
 			},
-			want:    nil,
+			want:    func() *nodes.LocationCollection { return nil },
 			wantErr: true,
 		},
 		{
@@ -46,7 +45,7 @@ func TestParseNodes(t *testing.T) {
 			args: args{
 				filePath: ptrStr("../../resources/map-with-empty-row.txt"),
 			},
-			want:    nil,
+			want:    func() *nodes.LocationCollection { return nil },
 			wantErr: true,
 		},
 		{
@@ -54,67 +53,12 @@ func TestParseNodes(t *testing.T) {
 			args: args{
 				filePath: ptrStr("../../resources/test-map.txt"),
 			},
-			want: &nodes.LocationCollection{
-				Collection: map[uint]*nodes.Location{
-					1: &nodes.Location{
-						Id:   1,
-						Name: "Hamburg",
-						Directions: nodes.Directions{
-							Blueprint: []string{},
-							Roads: map[string]*nodes.Location{
-								constant.DirectionNorth: nil,
-								constant.DirectionSouth: nil,
-								constant.DirectionWest:  nil,
-								constant.DirectionEast:  nil,
-							},
-						},
+			want: func() *nodes.LocationCollection {
+				return &nodes.LocationCollection{
+					ReferenceMap: map[string]uint{
+						"Hamburg": 1, "Beijing": 2, "Berlin": 3, "Bremen": 4, "Moscow": 5,
 					},
-					2: &nodes.Location{
-						Id:   2,
-						Name: "Beijing",
-						Directions: nodes.Directions{
-							Blueprint: []string{
-								"west=Hamburg", "east=Berlin", "north=Bremen",
-							},
-							Roads: map[string]*nodes.Location{
-								constant.DirectionNorth: nil,
-								constant.DirectionSouth: nil,
-								constant.DirectionWest:  nil,
-								constant.DirectionEast:  nil,
-							},
-						},
-					},
-					3: &nodes.Location{
-						Id:   3,
-						Name: "Moscow",
-						Directions: nodes.Directions{
-							Blueprint: []string{
-								"north=Hamburg", "west=Beijing",
-							},
-							Roads: map[string]*nodes.Location{
-								constant.DirectionNorth: nil,
-								constant.DirectionSouth: nil,
-								constant.DirectionWest:  nil,
-								constant.DirectionEast:  nil,
-							},
-						},
-					},
-					4: &nodes.Location{
-						Id:   4,
-						Name: "Bremen",
-						Directions: nodes.Directions{
-							Blueprint: []string{
-								"south=Hamburg",
-							},
-							Roads: map[string]*nodes.Location{
-								constant.DirectionNorth: nil,
-								constant.DirectionSouth: nil,
-								constant.DirectionWest:  nil,
-								constant.DirectionEast:  nil,
-							},
-						},
-					},
-				},
+				}
 			},
 			wantErr: false,
 		},
@@ -122,12 +66,13 @@ func TestParseNodes(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := ParseNodes(tt.args.filePath)
+			want := tt.want()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ParseNodes() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ParseNodes() got = %v, want %v", got, tt.want)
+			if want != nil && !reflect.DeepEqual(got.ReferenceMap, want.ReferenceMap) {
+				t.Errorf("ParseNodes() got = %v, want %v", got.ReferenceMap, want.ReferenceMap)
 			}
 		})
 	}
