@@ -1,0 +1,22 @@
+Hamburg
+Beijing north=Osaka west=Hannover east=Berlin south=Warsaw
+Moscow north=Hamburg west=Bremen south=Osaka east=Zurich
+Bremen south=Hamburg
+Miami east=Curitiba north=Madrid south=Hamburg
+Hannover west=Koln
+Osaka south=Hamburg east=Beijing north=Bremen
+Zurich north=Lisbon west=Hamburg south=Moscow
+Koln east=Hannover south=Curitiba
+Berlin west=Beijing south=London east=Brandenburg
+Rome south=Washington west=Frankfurt east=Warsaw north=Hannover
+Warsaw south=Washington east=London north=Beijing west=Rome
+London north=Berlin south=Prague west=Warsaw east=Potsdam
+Frankfurt east=Rome west=Tokyo
+Tokyo east=Frankfurt
+Curitiba west=Miami
+Madrid south=Miami north=Hamburg
+Lisbon south=Zurich
+Brandenburg west=Berlin
+Washington north=Warsaw east=Rome
+Prague north=London
+Potsdam west=London
