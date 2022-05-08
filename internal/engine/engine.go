@@ -20,6 +20,7 @@ func (en *Engine) Start() error {
 	return nil
 }
 
+//PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
 func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error {
 	for i := uint(1); i <= en.AttackersQty; i++ {
 		attacker, err := factory.Generate(nodes.Attacker{}, i)
