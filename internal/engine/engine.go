@@ -20,9 +20,9 @@ func (en *Engine) Start() error {
 	return nil
 }
 
-func (en *Engine) PrepareAttackers(factory *nodes.AttackerFactory) error {
+func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error {
 	for i := uint(1); i <= en.AttackersQty; i++ {
-		attacker, err := factory.Attacker(nodes.Attacker{}, i)
+		attacker, err := factory.Generate(nodes.Attacker{}, i)
 		if err != nil {
 			return errors.NewEngineErrorWrap("alienFactory", err)
 		}
