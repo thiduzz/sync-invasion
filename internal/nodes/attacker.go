@@ -8,3 +8,7 @@ type Attacker struct {
 	State    map[constant.AttackerState]bool
 	Location *Location
 }
+
+func NewAttacker(id uint, nameGeneratorFunc func() string) *Attacker {
+	return &Attacker{Id: id, Name: nameGeneratorFunc()}
+}
