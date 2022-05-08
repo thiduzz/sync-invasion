@@ -47,29 +47,31 @@ func (en *Engine) Start() error {
 }
 
 func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, error) {
+//attack define the target that the current attacker will invade
+func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, *nodes.Location, error) {
 	//abort if the attacker is dead (no-action)
 	if attacker.IsDead() {
-		return nil, errors.NewEngineErrorOp(errors.AttackerDead)
+		return nil, nil, errors.NewEngineErrorOp(errors.AttackerDead)
 	}
 	//abort if the attacker is trapped (no-action)
 	if attacker.IsTrapped() {
-		return nil, errors.NewEngineErrorOp(errors.AttackerTrapped)
+		return nil, nil, errors.NewEngineErrorOp(errors.AttackerTrapped)
 	}
-	var newLocation *nodes.Location
-
+	var newLocation, originalLocation *nodes.Location
+	originalLocation = attacker.Location
 	//check if it needs to initialize the attacker in a location
-	if attacker.Location == nil {
+	if originalLocation == nil {
 		//add entropy to the starting city definition
 		en.Randomizer.Reseed()
 		newLocation = en.Locations.GetRandom(en.Randomizer)
 		if newLocation == nil {
-			return nil, errors.NewEngineErrorOp(errors.EndOfTheWorld)
+			return nil, nil, errors.NewEngineErrorOp(errors.EndOfTheWorld)
 		}
 	} else {
 		//TODO: pick a city to attack from the outbound routes
 	}
 	attacker.Attack(newLocation)
-	return newLocation, nil
+	return newLocation, originalLocation, nil
 }
 
 //PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
