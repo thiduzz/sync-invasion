@@ -24,8 +24,8 @@ func NewLocation(id uint, name string) *Location {
 }
 
 type LocationInterface interface {
-	GetId() uint
-	GetName() string
+	NodeInterface
+	IsDestroyed() bool
 }
 
 func (l *Location) GetId() uint {
