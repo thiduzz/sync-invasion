@@ -14,18 +14,19 @@ type Directions struct {
 	Blueprint []string
 }
 
-func NewLocation(id uint, name string, originalDirectionsBlueprint []string) Location {
+var DefaultDirections = map[string]*Location{
+	constant.DirectionNorth: nil,
+	constant.DirectionSouth: nil,
+	constant.DirectionWest:  nil,
+	constant.DirectionEast:  nil,
+}
+
+func NewLocation(id uint, name string) *Location {
 	return Location{
 		Id:   id,
 		Name: name,
 		Directions: Directions{
-			Roads: map[string]*Location{
-				constant.DirectionNorth: nil,
-				constant.DirectionSouth: nil,
-				constant.DirectionWest:  nil,
-				constant.DirectionEast:  nil,
-			},
-			Blueprint: originalDirectionsBlueprint,
+			Roads: DefaultDirections,
 		}}
 }
 
