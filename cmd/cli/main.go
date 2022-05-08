@@ -17,7 +17,7 @@ import (
 func main() {
 	var (
 		flags       = flag.NewFlagSet("settings", flag.ExitOnError)
-		mapFilePath = flags.String(constant.MapFilePathParameter, "", "Path of file that represents the map of cities")
+		mapFilePath = flags.String(constant.MapFilePathParameter, "../../../resources/world-map.txt", "Path of file that represents the map of cities")
 		attackerQty = flags.Uint(constant.AlienQtyParameter, 100, "Total amount of attackers to invade the cities")
 		maxMoves    = flags.Uint(constant.MaxMoves, 10000, "Maximum moves necessary")
 	)
@@ -36,7 +36,10 @@ func main() {
 	}
 	randomizer := tools.NewRandomizer(time.Now().UnixMilli())
 	engineExecutor := engine.NewEngine(locations, randomizer, *attackerQty, *maxMoves)
-	engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(randomizer.RandomName))
+	err = engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(randomizer.RandomName))
+	if err != nil {
+		throwError(err, flags)
+	}
 	if err := engineExecutor.Start(); err != nil {
 		throwError(err, flags)
 	}
@@ -55,7 +58,7 @@ func throwError(err error, flags *flag.FlagSet) {
 		log.Println(err.Error())
 		flags.PrintDefaults()
 	} else {
-		log.Printf("error when parsing map: %s\n", err.Error())
+		log.Printf(err.Error())
 	}
 	os.Exit(1)
 }
