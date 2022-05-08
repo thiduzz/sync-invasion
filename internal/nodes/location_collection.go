@@ -1,5 +1,7 @@
 package nodes
 
+import "math/rand"
+
 type LocationCollection struct {
 	Collection   map[uint]*Location
 	ReferenceMap map[string]uint
@@ -26,4 +28,25 @@ func (lc *LocationCollection) GetByName(name string) *Location {
 		return lc.Collection[referenceId]
 	}
 	return nil
+}
+
+//GetUndestroyed O(N) - Return a slice of undestroyed city identifiers
+func (lc *LocationCollection) GetUndestroyed() []uint {
+	var locations []uint
+	for _, location := range lc.Collection {
+		if !location.IsDestroyed() {
+			locations = append(locations, location.GetId())
+		}
+	}
+	return locations
+}
+
+//GetRandom O(N) - Returns a random Location that is not destroyed
+func (lc *LocationCollection) GetRandom(randomizer *rand.Rand) *Location {
+	undestroyed := lc.GetUndestroyed()
+	if len(undestroyed) <= 0 {
+		return nil
+	}
+	randomKey := randomizer.Intn(len(undestroyed))
+	return lc.GetById(uint(randomKey))
 }

@@ -28,10 +28,14 @@ type LocationInterface interface {
 	GetName() string
 }
 
-func (l Location) GetId() uint {
+func (l *Location) GetId() uint {
 	return l.Id
 }
 
-func (l Location) GetName() string {
+func (l *Location) GetName() string {
 	return l.Name
+}
+
+func (l *Location) IsDestroyed() bool {
+	return l.State[constant.Destroyed]
 }
