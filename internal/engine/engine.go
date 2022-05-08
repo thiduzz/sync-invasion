@@ -13,7 +13,7 @@ type Engine struct {
 }
 
 func NewEngine(locations *nodes.LocationCollection, attackersQty uint, maxMoves uint) *Engine {
-	return &Engine{Locations: locations, AttackersQty: attackersQty, MaxMoves: maxMoves}
+	return &Engine{Locations: locations, AttackersQty: attackersQty, MaxMoves: maxMoves, Attackers: nodes.NewAttackerCollection()}
 }
 
 func (en *Engine) Start() error {
@@ -26,6 +26,7 @@ func (en *Engine) PrepareAttackers(factory *nodes.AttackerFactory) error {
 		if err != nil {
 			return errors.NewEngineErrorWrap("alienFactory", err)
 		}
+		en.Attackers.Add(attacker)
 	}
 	return nil
 }

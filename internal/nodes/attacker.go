@@ -12,3 +12,11 @@ type Attacker struct {
 func NewAttacker(id uint, nameGeneratorFunc func() string) *Attacker {
 	return &Attacker{Id: id, Name: nameGeneratorFunc()}
 }
+
+func (at *Attacker) GetId() uint {
+	return at.Id
+}
+
+func (at *Attacker) GetName() string {
+	return at.Name
+}
