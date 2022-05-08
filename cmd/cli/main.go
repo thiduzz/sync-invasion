@@ -33,9 +33,9 @@ func main() {
 	if err != nil {
 		throwError(err, flags)
 	}
-	entropyGenerator := utils.GenerateRandomizer(time.Now().UnixMilli())
-	engineExecutor := engine.NewEngine(locations, entropyGenerator, *attackerQty, *maxMoves)
-	engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(utils.GenerateRandomName))
+	randomizer := tools.NewRandomizer(time.Now().UnixMilli())
+	engineExecutor := engine.NewEngine(locations, randomizer, *attackerQty, *maxMoves)
+	engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(randomizer.RandomName))
 	if err := engineExecutor.Start(); err != nil {
 		throwError(err, flags)
 	}

@@ -1,6 +1,6 @@
 package nodes
 
-import "math/rand"
+import "github.com/thiduzz/code-kata-invasion/tools"
 
 type LocationCollection struct {
 	Collection   map[uint]*Location
@@ -42,7 +42,7 @@ func (lc *LocationCollection) GetUndestroyed() []uint {
 }
 
 //GetRandom O(N) - Returns a random Location that is not destroyed
-func (lc *LocationCollection) GetRandom(randomizer *rand.Rand) *Location {
+func (lc *LocationCollection) GetRandom(randomizer *tools.Randomizer) *Location {
 	undestroyed := lc.GetUndestroyed()
 	if len(undestroyed) <= 0 {
 		return nil

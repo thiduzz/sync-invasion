@@ -3,19 +3,19 @@ package engine
 import (
 	"github.com/thiduzz/code-kata-invasion/internal/errors"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
-	"math/rand"
-	"time"
+	"github.com/thiduzz/code-kata-invasion/tools"
 )
 
 type Engine struct {
-	Locations    *nodes.LocationCollection
-	Attackers    *nodes.AttackerCollection
-	Randomizer   *rand.Rand
-	AttackersQty uint
-	MaxMoves     uint
+	Locations      *nodes.LocationCollection
+	Attackers      *nodes.AttackerCollection
+	Randomizer     *tools.Randomizer
+	AttackersQty   uint
+	MaxMoves       uint
+	onGoingAttacks map[uint]uint
 }
 
-func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attackersQty uint, maxMoves uint) *Engine {
+func NewEngine(locations *nodes.LocationCollection, randomizer *tools.Randomizer, attackersQty uint, maxMoves uint) *Engine {
 	return &Engine{
 		Locations:    locations,
 		AttackersQty: attackersQty,
@@ -30,7 +30,7 @@ func NewEngine(locations *nodes.LocationCollection, randomizer *rand.Rand, attac
 func (en *Engine) Start() error {
 	for iterations := uint(0); iterations < en.MaxMoves; iterations++ {
 		//add entropy to the attacker order
-		en.reseedRandom()
+		en.Randomizer.Reseed()
 		orderOfAttack := en.Attackers.Sort(en.Randomizer)
 		for _, attackerIdentifier := range orderOfAttack {
 			attacker := en.Attackers.GetById(attackerIdentifier)
@@ -60,7 +60,7 @@ func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, error) {
 	//check if it needs to initialize the attacker in a location
 	if attacker.Location == nil {
 		//add entropy to the starting city definition
-		en.reseedRandom()
+		en.Randomizer.Reseed()
 		newLocation = en.Locations.GetRandom(en.Randomizer)
 		if newLocation == nil {
 			return nil, errors.NewEngineErrorOp(errors.EndOfTheWorld)
@@ -82,11 +82,6 @@ func (en *Engine) PrepareAttackers(factory nodes.AttackerFactoryInterface) error
 		en.Attackers.Add(attacker)
 	}
 	return nil
-}
-
-//reseedRandom Reseed the randomizer with the current time providing a different entropy
-func (en *Engine) reseedRandom() {
-	en.Randomizer.Seed(time.Now().UnixMilli())
 }
 
 func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {

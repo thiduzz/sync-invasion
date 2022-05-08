@@ -33,7 +33,7 @@ func (lf LocationFactory) Seed(locationQty int) *LocationCollection {
 	if locationQty < 0 {
 		return nil
 	}
-	collection := &LocationCollection{}
+	collection := NewLocationCollection()
 	for id := uint(1); id <= uint(locationQty); id++ {
 		location, err := lf.Generate(Location{}, id)
 		if err != nil {

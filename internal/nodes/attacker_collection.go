@@ -1,8 +1,6 @@
 package nodes
 
-import (
-	"math/rand"
-)
+import "github.com/thiduzz/code-kata-invasion/tools"
 
 type AttackerCollection struct {
 	Collection   map[uint]*Attacker
@@ -38,7 +36,7 @@ func (ac *AttackerCollection) GetByName(name string) *Attacker {
 // ensure to add the necessary entropy so that the attackers will act in
 // different order in most iterations - it accepts a randomizer that
 // enable a better control over the undeterministic behavior while testing
-func (ac *AttackerCollection) Sort(randomizer *rand.Rand) []uint {
+func (ac *AttackerCollection) Sort(randomizer *tools.Randomizer) []uint {
 	randomizer.Shuffle(len(ac.keys), func(i, j int) {
 		ac.keys[i], ac.keys[j] = ac.keys[j], ac.keys[i]
 	})

@@ -2,11 +2,13 @@ package engine
 
 import (
 	"errors"
+	"fmt"
+	"github.com/brianvoe/gofakeit/v6"
 	"github.com/golang/mock/gomock"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	mock_nodes "github.com/thiduzz/code-kata-invasion/internal/mock/nodes"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
-	"math/rand"
+	"github.com/thiduzz/code-kata-invasion/tools"
 	"reflect"
 	"testing"
 )
@@ -101,7 +103,7 @@ func TestEngine_PrepareAttackers(t *testing.T) {
 func TestEngine_attack(t *testing.T) {
 	type fields struct {
 		Locations      *nodes.LocationCollection
-		randomizerFunc func() *rand.Rand
+		randomizerFunc func() *tools.Randomizer
 	}
 	type args struct {
 		attacker *nodes.Attacker
@@ -117,9 +119,8 @@ func TestEngine_attack(t *testing.T) {
 			name: "should error when retrieved attacker is dead",
 			fields: fields{
 				Locations: nil,
-				randomizerFunc: func() *rand.Rand {
-					source := rand.NewSource(10)
-					return rand.New(source)
+				randomizerFunc: func() *tools.Randomizer {
+					return tools.NewRandomizer(10)
 				},
 			},
 			args: args{
@@ -139,9 +140,8 @@ func TestEngine_attack(t *testing.T) {
 			name: "should error when retrieved attacker is trapped",
 			fields: fields{
 				Locations: nil,
-				randomizerFunc: func() *rand.Rand {
-					source := rand.NewSource(10)
-					return rand.New(source)
+				randomizerFunc: func() *tools.Randomizer {
+					return tools.NewRandomizer(10)
 				},
 			},
 			args: args{
@@ -160,13 +160,11 @@ func TestEngine_attack(t *testing.T) {
 		{
 			name: "should return random new location when attacker has none (on attacker first iteration)",
 			fields: fields{
-				Locations: &nodes.LocationCollection{
-					Collection:   nil,
-					ReferenceMap: nil,
-				},
-				randomizerFunc: func() *rand.Rand {
-					source := rand.NewSource(10)
-					return rand.New(source)
+				Locations: nodes.NewLocationFactory(func() string { return "test" }).Seed(10),
+				randomizerFunc: func() *tools.Randomizer {
+					random := tools.NewRandomizer(10)
+					random.PreventReseed(true)
+					return random
 				},
 			},
 			args: args{
@@ -176,7 +174,12 @@ func TestEngine_attack(t *testing.T) {
 					Location: nil,
 				},
 			},
-			want:    &nodes.Location{},
+			want: &nodes.Location{
+				Id:                 4,
+				Name:               "test",
+				DirectionsOutBound: nodes.Directions{Roads: nodes.NewDirectionCompass()},
+				DirectionsInBound:  nodes.Directions{Roads: nodes.NewDirectionCompass()},
+			},
 			wantErr: false,
 		},
 	}
@@ -196,4 +199,8 @@ func TestEngine_attack(t *testing.T) {
 			}
 		})
 	}
+}
+
+func RandomizedNames() string {
+	return fmt.Sprintf("%s %s", gofakeit.UUID(), gofakeit.PetName())
 }
