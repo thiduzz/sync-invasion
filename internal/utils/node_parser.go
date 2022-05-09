@@ -13,6 +13,9 @@ import (
 //ParseNodes Utility function - For reading the map file and convert it into a collection of locations
 // Assumption: I assume that in a specific direction there might be more than one location and
 // that location needs to keep a reference of all the inbound locations to it
+// Assumptions: I am considering that city names do not have space or multiple words
+// I am also considering that Inbound links (not declared in the file) are also viable options
+// for an attacker to use for an attack.
 func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 	if *filePath == "" {
 		return nil, errors.NewCommandError(constant.MapFilePathParameter, "missing parameter")
@@ -51,10 +54,13 @@ func ParseNodes(filePath *string) (*nodes.LocationCollection, error) {
 			// check whether the location has already been added to the list of location
 			neighboringLocation := locations.GetByName(neighboringLocationName)
 			if neighboringLocation == nil {
+				//increment to attribute a new id
 				id++
 				neighboringLocation = nodes.NewLocation(id, neighboringLocationName)
 				locations.Add(neighboringLocation)
 			}
+			// Define Directions OutBound (used for navigating and keeping track for printing)
+			// and Inbound (used for navigating only)
 			location.DirectionsOutBound.Add(direction, neighboringLocation, false)
 			location.DirectionsInBound.Add(direction, neighboringLocation, false)
 			neighboringLocation.DirectionsInBound.Add(direction, location, true)
