@@ -94,13 +94,18 @@ func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, *nodes.Loca
 	return newLocation, originalLocation, nil
 }
 
-//invade start attacking a location by
+//invade start attacking a location and possibly getting trapped or die in a fight
+// Assumption: An attacker can only move through OutBound directions
 func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
 	if target != nil {
 		//start invading new location
 		if en.attacksInProgress[target.GetId()] == constant.EmptyCity {
 			//Did not find anyone - come in
 			en.attacksInProgress[target.GetId()] = attacker.GetId()
+			//Evaluate if it is trapped in the new city
+			if target.DirectionsOutBound.IsDeadEnd() {
+				attacker.Trapped()
+			}
 		} else {
 			//Found another attacker - Fight!
 			enemy := en.Attackers.GetById(en.attacksInProgress[target.GetId()])

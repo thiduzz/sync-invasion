@@ -65,6 +65,15 @@ func (d *Directions) InvertDirection(direction string) string {
 	return ""
 }
 
+func (d *Directions) IsDeadEnd() bool {
+	for dir, _ := range d.Roads {
+		if len(d.Roads[dir]) > 0 {
+			return false
+		}
+	}
+	return true
+}
+
 //Remove Unset all directions that point to a destroyed location
 func (d *Directions) Remove(id uint) {
 	for dir, _ := range d.Roads {
