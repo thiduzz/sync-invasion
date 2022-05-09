@@ -19,15 +19,19 @@ func NewLocationCollection() *LocationCollection {
 	}
 }
 
+//Add Adds a new Location to the collection and in addition track the name by an underlying map
+// to more easily access it with the GetByName
 func (lc *LocationCollection) Add(location *Location) {
 	lc.Collection[location.GetId()] = location
 	lc.ReferenceMap[location.GetName()] = location.GetId()
 }
 
+//GetById O(1) Get Location by Id
 func (lc *LocationCollection) GetById(id uint) *Location {
 	return lc.Collection[id]
 }
 
+//GetByName O(1) Get location by the name utilizing the underlying support map
 func (lc *LocationCollection) GetByName(name string) *Location {
 	if referenceId, exists := lc.ReferenceMap[name]; exists {
 		return lc.Collection[referenceId]
@@ -59,6 +63,7 @@ func (lc *LocationCollection) GetRandom(randomizer *tools.Randomizer) *Location 
 	return lc.GetById(undestroyed[0])
 }
 
+//DestroyById Destroy a city and all its links to any other city
 func (lc *LocationCollection) DestroyById(id uint) {
 	for _, location := range lc.Collection {
 		//keep location on the main map
