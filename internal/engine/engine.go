@@ -86,40 +86,53 @@ func (en *Engine) attack(attacker *nodes.Attacker) (*nodes.Location, *nodes.Loca
 	if attacker.IsTrapped() {
 		return nil, nil, errors.NewEngineErrorOp(errors.AttackerTrapped)
 	}
-	var newLocation, originalLocation *nodes.Location
+	var targetLocation, originalLocation *nodes.Location
 	originalLocation = attacker.Location
 	//check if it needs to initialize the attacker in a location
 	if originalLocation == nil {
 		//add entropy to the starting city definition
 		en.Randomizer.Reseed()
-		newLocation = en.Locations.GetRandom(en.Randomizer)
-		if newLocation == nil {
+		targetLocation = en.Locations.GetRandom(en.Randomizer)
+		if targetLocation == nil {
 			return nil, nil, errors.NewEngineErrorOp(errors.EndOfTheWorld)
 		}
 	} else {
-
+		//acquire new target to attack
+		targetLocation = en.planAttack(originalLocation)
 		//Evaluate if it is trapped in the new city
-		if originalLocation.DirectionsOutBound.IsDeadEnd() {
-			attacker.Trapped()
-			return nil, nil, errors.NewEngineErrorOp(errors.AttackerTrapped)
-		}
-		// Get all possible leaving the current location
-		roadsAvailable := originalLocation.DirectionsOutBound.GetRandomizedRoads(en.Randomizer)
-		for _, locationId := range roadsAvailable {
-			//define as the destination the first random location that is not destroyed
-			location := en.Locations.GetById(locationId)
-			if !location.IsDestroyed() {
-				newLocation = location
-				break
-			}
-		}
-		if newLocation == nil {
+		if targetLocation == nil {
 			attacker.Trapped()
 			return nil, nil, errors.NewEngineErrorOp(errors.AttackerTrapped)
 		}
 	}
-	attacker.Attack(newLocation)
-	return newLocation, originalLocation, nil
+	attacker.Attack(targetLocation)
+	return targetLocation, originalLocation, nil
+}
+
+func (en *Engine) planAttack(originalLocation *nodes.Location) *nodes.Location {
+	//Evaluate if it is trapped in the new city
+	if originalLocation.DirectionsOutBound.IsDeadEnd() && originalLocation.DirectionsInBound.IsDeadEnd() {
+		return nil
+	}
+	// Get all possible leaving the current location
+	outboundRoadsAvailable := originalLocation.DirectionsOutBound.GetRandomizedRoads(en.Randomizer)
+	for _, locationId := range outboundRoadsAvailable {
+		//define as the destination the first random location that is not destroyed
+		location := en.Locations.GetById(locationId)
+		if !location.IsDestroyed() {
+			return location
+		}
+	}
+	// Get all possible leaving the current location
+	inboundRoadsAvailable := originalLocation.DirectionsInBound.GetRandomizedRoads(en.Randomizer)
+	for _, locationId := range inboundRoadsAvailable {
+		//define as the destination the first random location that is not destroyed
+		location := en.Locations.GetById(locationId)
+		if !location.IsDestroyed() {
+			return location
+		}
+	}
+	return nil
 }
 
 //invade start attacking a location and possibly getting trapped or die in a fight
@@ -129,6 +142,7 @@ func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
 		//start invading new location
 		if en.attacksInProgress[target.GetId()] == constant.EmptyCity {
 			//Did not find anyone - come in
+			fmt.Printf("Attacker %s has moved to %s\n", attacker, target.GetName())
 			en.attacksInProgress[target.GetId()] = attacker.GetId()
 		} else {
 			//Found another attacker - Fight!
