@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
+	"github.com/thiduzz/code-kata-invasion/tools"
 )
 
 type Directions struct {
@@ -37,6 +38,25 @@ func (d *Directions) Exists(direction string, id uint) bool {
 }
 
 // GetRandomizedRoads GetRandom O(N) - Returns random location Ids attached to this direction
+func (d *Directions) GetRandomizedRoads(randomizer *tools.Randomizer) []uint {
+	var locationIds []uint
+	for dir, _ := range d.Roads {
+		// if it doesnt have roads in this direction skip iteration
+		if len(d.Roads[dir]) > 0 {
+			continue
+		}
+		// adds reference to locations in a slice (easier to handle and shuffle)
+		for u, _ := range d.Roads[dir] {
+			locationIds = append(locationIds, u)
+		}
+	}
+	if len(locationIds) <= 0 {
+		return locationIds
+	}
+	randomizer.ShuffleUint(locationIds)
+	return locationIds
+}
+
 //GetDirectionString Returns a string containing all the directions and references in the expected stdout format
 func (d *Directions) GetDirectionString(collection *LocationCollection, undestroyedIds []uint) string {
 	var directionsBytes bytes.Buffer
