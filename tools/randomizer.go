@@ -48,5 +48,5 @@ func (rm *Randomizer) Reseed() {
 	if rm == nil || rm.preventReseed {
 		return
 	}
-	rm.Seed(time.Now().UnixMilli())
+	rm.Seed(time.Now().UnixNano())
 }

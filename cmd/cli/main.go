@@ -35,7 +35,7 @@ func main() {
 	if err != nil {
 		throwError(err, flags)
 	}
-	randomizer := tools.NewRandomizer(time.Now().UnixMilli())
+	randomizer := tools.NewRandomizer(time.Now().UnixNano())
 	engineExecutor := engine.NewEngine(locations, randomizer, *attackerQty, *maxMoves)
 	err = engineExecutor.PrepareAttackers(nodes.NewAttackerFactory(randomizer.RandomName))
 	if err != nil {
