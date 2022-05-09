@@ -1,17 +1,21 @@
 package nodes
 
-import "github.com/thiduzz/code-kata-invasion/internal/constant"
+import (
+	"bytes"
+	"fmt"
+	"github.com/thiduzz/code-kata-invasion/internal/constant"
+)
 
 type Directions struct {
-	Roads map[string][]uint
+	Roads map[string]map[uint]bool
 }
 
-func NewDirectionCompass() map[string][]uint {
-	return map[string][]uint{
-		constant.DirectionNorth: nil,
-		constant.DirectionSouth: nil,
-		constant.DirectionWest:  nil,
-		constant.DirectionEast:  nil,
+func NewDirectionCompass() map[string]map[uint]bool {
+	return map[string]map[uint]bool{
+		constant.DirectionNorth: {},
+		constant.DirectionSouth: {},
+		constant.DirectionWest:  {},
+		constant.DirectionEast:  {},
 	}
 }
 
@@ -20,17 +24,29 @@ func (d *Directions) Add(direction string, location *Location, IsReverseDirectio
 		direction = d.InvertDirection(direction)
 	}
 	if !d.Exists(direction, location.GetId()) {
-		d.Roads[direction] = append(d.Roads[direction], location.GetId())
+		d.Roads[direction][location.GetId()] = true
 	}
 }
 
 func (d *Directions) Exists(direction string, id uint) bool {
-	for _, item := range d.Roads[direction] {
-		if item == id {
-			return true
+	return d.Roads[direction][id]
+}
+
+func (d *Directions) GetDirectionString(collection *LocationCollection, undestroyedIds []uint) string {
+	var directionsBytes bytes.Buffer
+	for direction, locationIdsMap := range d.Roads {
+		if len(locationIdsMap) <= 0 {
+			continue
+		}
+		for _, locationIdentifier := range undestroyedIds {
+			if locationIdsMap[locationIdentifier] {
+				if location := collection.GetById(locationIdentifier); location != nil {
+					directionsBytes.WriteString(fmt.Sprintf(" %s=%s", direction, location.GetName()))
+				}
+			}
 		}
 	}
-	return false
+	return directionsBytes.String()
 }
 
 //InvertDirection Method responsible for reversing the compass - utilized when adding InBound connection
@@ -47,4 +63,13 @@ func (d *Directions) InvertDirection(direction string) string {
 		return constant.DirectionWest
 	}
 	return ""
+}
+
+//Remove Unset all directions that point to a destroyed location
+func (d *Directions) Remove(id uint) {
+	for dir, _ := range d.Roads {
+		if _, exists := d.Roads[dir][id]; exists {
+			delete(d.Roads[dir], id)
+		}
+	}
 }

@@ -56,3 +56,13 @@ func (lc *LocationCollection) GetRandom(randomizer *tools.Randomizer) *Location 
 	}
 	return lc.GetById(undestroyed[0])
 }
+
+func (lc *LocationCollection) DestroyById(id uint) {
+	for _, location := range lc.Collection {
+		if location.GetId() == id {
+			location.SetDestroyed(true)
+		}
+		location.DirectionsOutBound.Remove(id)
+		location.DirectionsInBound.Remove(id)
+	}
+}
