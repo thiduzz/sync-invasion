@@ -1,27 +1,31 @@
 package engine
 
 import (
+	goerrors "errors"
+	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/internal/errors"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
 	"github.com/thiduzz/code-kata-invasion/tools"
+	"log"
 )
 
 type Engine struct {
-	Locations      *nodes.LocationCollection
-	Attackers      *nodes.AttackerCollection
-	Randomizer     *tools.Randomizer
-	AttackersQty   uint
-	MaxMoves       uint
-	onGoingAttacks map[uint]uint
+	Locations         *nodes.LocationCollection
+	Attackers         *nodes.AttackerCollection
+	Randomizer        *tools.Randomizer
+	AttackersQty      uint
+	MaxMoves          uint
+	attacksInProgress map[uint]uint
 }
 
 func NewEngine(locations *nodes.LocationCollection, randomizer *tools.Randomizer, attackersQty uint, maxMoves uint) *Engine {
 	return &Engine{
-		Locations:    locations,
-		AttackersQty: attackersQty,
-		MaxMoves:     maxMoves,
-		Attackers:    nodes.NewAttackerCollection(),
-		Randomizer:   randomizer,
+		Locations:         locations,
+		AttackersQty:      attackersQty,
+		MaxMoves:          maxMoves,
+		Attackers:         nodes.NewAttackerCollection(),
+		Randomizer:        randomizer,
+		attacksInProgress: map[uint]uint{},
 	}
 }
 
@@ -36,7 +40,7 @@ func (en *Engine) Start() error {
 			attacker := en.Attackers.GetById(attackerIdentifier)
 			//method responsible for acquiring the target and evaluating attackers state ("health")
 			target, originalLocation, err := en.attack(attacker)
-			if err != nil && evaluateError(err) {
+			if err != nil && shouldInterrupt(err) {
 				return err
 			}
 			//stop invading current location
@@ -49,17 +53,6 @@ func (en *Engine) Start() error {
 	}
 	log.Println(en.Locations)
 	return nil
-}
-
-func evaluateError(err error) bool {
-	var ee *errors.EngineError
-	if goerrors.As(err, &ee) {
-		switch ee.Op {
-		case errors.AttackerDead, errors.AttackerTrapped:
-			return false
-		}
-	}
-	return true
 }
 
 //PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
@@ -107,9 +100,27 @@ func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
 		//start invading new location
 		if en.attacksInProgress[target.GetId()] == constant.EmptyCity {
 			//Did not find anyone - come in
+			en.attacksInProgress[target.GetId()] = attacker.GetId()
+		} else {
+			//Found another attacker - Fight!
+			enemy := en.Attackers.GetById(en.attacksInProgress[target.GetId()])
+			en.Locations.DestroyById(target.GetId())
+			enemy.Die()
+			attacker.Die()
+			log.Printf("%s has been destroyed by alien %s and %s", target.GetName(), enemy, attacker)
 		}
 	}
+}
 
-func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
-
+//shouldInterrupt Determine how a specific error is treated on the lifecycle of the engine
+// returning true will interrupt the execution
+func shouldInterrupt(err error) bool {
+	var ee *errors.EngineError
+	if goerrors.As(err, &ee) {
+		switch ee.Op {
+		case errors.AttackerDead, errors.AttackerTrapped:
+			return false
+		}
+	}
+	return true
 }
