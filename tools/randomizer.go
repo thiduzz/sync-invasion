@@ -19,7 +19,7 @@ type Randomizer struct {
 // of undeterministic behavior in the engine of the application
 func NewRandomizer(seed int64) *Randomizer {
 	if seed == 0 {
-		seed = time.Now().UnixNano()
+		seed = time.Now().Unix()
 	}
 	source := rand.NewSource(seed)
 	return &Randomizer{rand.New(source), false}
@@ -39,7 +39,7 @@ func (rm *Randomizer) ShuffleUint(slice []uint) {
 		return
 	}
 	rm.Rand.Shuffle(len(slice), func(i, j int) {
-		slice[uint(i)], slice[uint(i)] = slice[uint(i)], slice[uint(i)]
+		slice[uint(i)], slice[uint(j)] = slice[uint(j)], slice[uint(i)]
 	})
 }
 
@@ -48,5 +48,5 @@ func (rm *Randomizer) Reseed() {
 	if rm == nil || rm.preventReseed {
 		return
 	}
-	rm.Seed(time.Now().UnixNano())
+	rm.Rand.Seed(time.Now().Unix())
 }
