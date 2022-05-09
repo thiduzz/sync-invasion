@@ -61,15 +61,19 @@ func (lc *LocationCollection) GetRandom(randomizer *tools.Randomizer) *Location 
 
 func (lc *LocationCollection) DestroyById(id uint) {
 	for _, location := range lc.Collection {
+		//keep location on the main map
 		if location.GetId() == id {
 			location.SetDestroyed(true)
 		}
+		//ensure that no one can move into the destroyed location anymore
 		location.DirectionsOutBound.Remove(id)
 		location.DirectionsInBound.Remove(id)
 	}
 }
 
+//String Implemented Stringer - returns the final print of all undestroyed city when the application stops
 func (lc *LocationCollection) String() string {
+	// Validate if its all destroyed
 	if len(lc.GetUndestroyed()) == 0 {
 		return "The world has ended (all cities are destroyed)!"
 	}
@@ -79,8 +83,10 @@ func (lc *LocationCollection) String() string {
 	for _, locationIdentifier := range notDestroyedLocations {
 		if location := lc.GetById(locationIdentifier); location != nil {
 			if directionString := location.DirectionsOutBound.GetDirectionString(lc, notDestroyedLocations); directionString != "" {
+				//some directions available
 				locationsBytes.WriteString(fmt.Sprintf("%s%s\n", location.GetName(), directionString))
 			} else {
+				//no directions available
 				locationsBytes.WriteString(fmt.Sprintf("%s\n", location.GetName()))
 			}
 		}

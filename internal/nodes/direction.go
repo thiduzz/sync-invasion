@@ -10,6 +10,7 @@ type Directions struct {
 	Roads map[string]map[uint]bool
 }
 
+//NewDirectionCompass Provides a default compass map
 func NewDirectionCompass() map[string]map[uint]bool {
 	return map[string]map[uint]bool{
 		constant.DirectionNorth: {},
@@ -19,10 +20,13 @@ func NewDirectionCompass() map[string]map[uint]bool {
 	}
 }
 
+//Add creates a link between cities - so that the attacker can traverse it
 func (d *Directions) Add(direction string, location *Location, IsReverseDirection bool) {
+	// defines if it should reverse the direction - useful when defining inbound routes
 	if IsReverseDirection {
 		direction = d.InvertDirection(direction)
 	}
+	// Adds reference of location to Roads Direction (only possible value is "true" or it doesnt exist)
 	if !d.Exists(direction, location.GetId()) {
 		d.Roads[direction][location.GetId()] = true
 	}
@@ -32,6 +36,8 @@ func (d *Directions) Exists(direction string, id uint) bool {
 	return d.Roads[direction][id]
 }
 
+// GetRandomizedRoads GetRandom O(N) - Returns random location Ids attached to this direction
+//GetDirectionString Returns a string containing all the directions and references in the expected stdout format
 func (d *Directions) GetDirectionString(collection *LocationCollection, undestroyedIds []uint) string {
 	var directionsBytes bytes.Buffer
 	for direction, locationIdsMap := range d.Roads {
@@ -65,6 +71,7 @@ func (d *Directions) InvertDirection(direction string) string {
 	return ""
 }
 
+//IsDeadEnd checks if there are any leading road available
 func (d *Directions) IsDeadEnd() bool {
 	for dir, _ := range d.Roads {
 		if len(d.Roads[dir]) > 0 {
