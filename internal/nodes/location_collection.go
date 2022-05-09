@@ -1,6 +1,8 @@
 package nodes
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/thiduzz/code-kata-invasion/tools"
 	"sort"
 )
@@ -65,4 +67,23 @@ func (lc *LocationCollection) DestroyById(id uint) {
 		location.DirectionsOutBound.Remove(id)
 		location.DirectionsInBound.Remove(id)
 	}
+}
+
+func (lc *LocationCollection) String() string {
+	if len(lc.GetUndestroyed()) == 0 {
+		return "The world has ended (all cities are destroyed)!"
+	}
+	var locationsBytes bytes.Buffer
+	locationsBytes.WriteString(fmt.Sprintf("\n---Current World Map---\n\n"))
+	notDestroyedLocations := lc.GetUndestroyed()
+	for _, locationIdentifier := range notDestroyedLocations {
+		if location := lc.GetById(locationIdentifier); location != nil {
+			if directionString := location.DirectionsOutBound.GetDirectionString(lc, notDestroyedLocations); directionString != "" {
+				locationsBytes.WriteString(fmt.Sprintf("%s%s\n", location.GetName(), directionString))
+			} else {
+				locationsBytes.WriteString(fmt.Sprintf("%s\n", location.GetName()))
+			}
+		}
+	}
+	return locationsBytes.String()
 }
