@@ -58,9 +58,11 @@ func (en *Engine) Start() error {
 		}
 		// abort engine
 		if !attacksHappened {
+			fmt.Println("No more moves possible!")
 			return nil
 		}
 	}
+	fmt.Println("No more moves available!")
 	return nil
 }
 
