@@ -23,6 +23,14 @@ This are the set of rules are defined for the invasion and the world:
     - Or, each alien has moved for at least 10.000 times
 - When simulation ends the map should be printed with the remaining cities in the same format as the input map file
 
+## Unimplemented
+
+- [ ] Add different types of Attackers
+- [ ] Add different types of Locations
+- [ ] GUI for visualization
+- [ ] Enable concurrency on creation (like spawn delay)
+- [ ] Enable concurrency on interactions of attackers (with different attacker speed)
+
 ## Pre-requisites
 
 - Installed [Golang 1.18 or greater](https://go.dev/dl/)
