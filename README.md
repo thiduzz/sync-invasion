@@ -58,13 +58,13 @@ Go to the project directory
 Build project
 
 ```bash
-  go build ./cmd/cli/ -o ./bin/simulation
+   go build -o ./simulation ./cmd/cli/
 ```
 
 ## Usage
 
 ```bash
-     ./bin/simulation --map-path={MAP_FILE_PATH} --alien-qty={QUANTITY_OF_ALIENS} --max-moves={MAX_APPLICATION_ITERATION}
+     ./simulation --map-path={MAP_FILE_PATH} --alien-qty={QUANTITY_OF_ALIENS} --max-moves={MAX_APPLICATION_ITERATION}
 ```
 - `--map-path`: **(optional)** Path of file that represents the map of cities. Default to "./resources/world-map.txt"
 - `--alien-qty`: **(optional)** Total amount of aliens to invade. Defaults to 100
@@ -73,7 +73,7 @@ Build project
 ### Example
 
 ```bash
-     ./bin/simulation --map-path=./resources/world-map.txt --alien-qty=10 --max-moves=30
+     ./simulation --map-path=./resources/world-map.txt --alien-qty=10 --max-moves=30
 ```
 In the command above, a file located in the `resources` folder with the name `world-map.txt` will be loaded and define the cities. 10 aliens will be created. Each aliens will "move" at max 30 times between this cities.
 
