@@ -42,7 +42,7 @@ func (d *Directions) GetRandomizedRoads(randomizer *tools.Randomizer) []uint {
 	var locationIds []uint
 	for dir, _ := range d.Roads {
 		// if it doesnt have roads in this direction skip iteration
-		if len(d.Roads[dir]) > 0 {
+		if len(d.Roads[dir]) <= 0 {
 			continue
 		}
 		// adds reference to locations in a slice (easier to handle and shuffle)
