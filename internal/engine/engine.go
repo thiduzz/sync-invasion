@@ -36,7 +36,7 @@ func (en *Engine) Start() error {
 			attacker := en.Attackers.GetById(attackerIdentifier)
 			//method responsible for acquiring the target and evaluating attackers state ("health")
 			target, originalLocation, err := en.attack(attacker)
-			if err != nil {
+			if err != nil && evaluateError(err) {
 				return err
 			}
 			//stop invading current location
@@ -47,7 +47,19 @@ func (en *Engine) Start() error {
 			en.invade(attacker, target)
 		}
 	}
+	log.Println(en.Locations)
 	return nil
+}
+
+func evaluateError(err error) bool {
+	var ee *errors.EngineError
+	if goerrors.As(err, &ee) {
+		switch ee.Op {
+		case errors.AttackerDead, errors.AttackerTrapped:
+			return false
+		}
+	}
+	return true
 }
 
 //PrepareAttackers Generate aliens with a factory and add them to the engine to be later on "worked"
