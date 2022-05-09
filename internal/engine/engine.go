@@ -36,13 +36,19 @@ func (en *Engine) Start() error {
 		//add entropy to the attacker order
 		en.Randomizer.Reseed()
 		orderOfAttack := en.Attackers.Sort(en.Randomizer)
+		attacksHappened := false
 		for _, attackerIdentifier := range orderOfAttack {
 			attacker := en.Attackers.GetById(attackerIdentifier)
 			//method responsible for acquiring the target and evaluating attackers state ("health")
 			target, originalLocation, err := en.attack(attacker)
-			if err != nil && shouldInterrupt(err) {
-				return err
+			if err != nil {
+				if shouldInterrupt, noOperations := evaluateError(err); noOperations {
+					continue
+				} else if shouldInterrupt {
+					return err
+				}
 			}
+			attacksHappened = true
 			//stop invading current location
 			if originalLocation != nil && en.attacksInProgress[originalLocation.GetId()] == attacker.GetId() {
 				delete(en.attacksInProgress, originalLocation.GetId())
@@ -50,8 +56,11 @@ func (en *Engine) Start() error {
 			//start invading new location
 			en.invade(attacker, target)
 		}
+		// abort engine
+		if !attacksHappened {
+			return nil
+		}
 	}
-	log.Println(en.Locations)
 	return nil
 }
 
@@ -112,7 +121,7 @@ func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
 			en.Locations.DestroyById(target.GetId())
 			enemy.Die()
 			attacker.Die()
-			log.Printf("%s has been destroyed by alien %s and %s", target.GetName(), enemy, attacker)
+			fmt.Printf("%s has been destroyed by alien %s and %s\n", target.GetName(), enemy, attacker)
 		}
 	}
 }
