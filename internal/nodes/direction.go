@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/tools"
+	"sort"
 )
 
 type Directions struct {
@@ -53,6 +54,7 @@ func (d *Directions) GetRandomizedRoads(randomizer *tools.Randomizer) []uint {
 	if len(locationIds) <= 0 {
 		return locationIds
 	}
+	sort.Slice(locationIds, func(i, j int) bool { return locationIds[i] < locationIds[j] })
 	randomizer.ShuffleUint(locationIds)
 	return locationIds
 }
