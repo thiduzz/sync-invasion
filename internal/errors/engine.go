@@ -29,7 +29,7 @@ func NewEngineErrorOp(op EngineErrorType) *EngineError {
 	case EndOfTheWorld:
 		return &EngineError{Op: op, Err: errors.New("it's the end of the world as we know it")}
 	default:
-		return &EngineError{Op: General, Err: errors.New("something unexpected happened")}
+		return &EngineError{Op: op, Err: errors.New("something unexpected happened")}
 	}
 }
 
