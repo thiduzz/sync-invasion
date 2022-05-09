@@ -126,15 +126,14 @@ func (en *Engine) invade(attacker *nodes.Attacker, target *nodes.Location) {
 	}
 }
 
-//shouldInterrupt Determine how a specific error is treated on the lifecycle of the engine
-// returning true will interrupt the execution
-func shouldInterrupt(err error) bool {
+//evaluateError Determine how a specific error is treated on the lifecycle of the engine
+func evaluateError(err error) (interrupt bool, noOperation bool) {
 	var ee *errors.EngineError
 	if goerrors.As(err, &ee) {
 		switch ee.Op {
 		case errors.AttackerDead, errors.AttackerTrapped:
-			return false
+			return false, true
 		}
 	}
-	return true
+	return true, false
 }
