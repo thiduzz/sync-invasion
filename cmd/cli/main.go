@@ -57,10 +57,10 @@ func validateInput(path *string) error {
 func throwError(err error, flags *flag.FlagSet) {
 	var ce *localError.CommandError
 	if errors.As(err, &ce) {
-		log.Println(err.Error())
+		fmt.Println(err.Error())
 		flags.PrintDefaults()
 	} else {
-		log.Printf(err.Error())
+		fmt.Println(err.Error())
 	}
 	os.Exit(1)
 }
