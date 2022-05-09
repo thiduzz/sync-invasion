@@ -27,6 +27,19 @@ This are the set of rules are defined for the invasion and the world:
 
 - Installed [Golang 1.18 or greater](https://go.dev/dl/)
 - Installed [Mockgen 1.6.0](https://github.com/golang/mock) for Mock Generation
+- Installed [Makefile](https://github.com/golang/mock) for Operating project. You can use the following commands below to install it:
+```shell
+#MacOS
+brew install make
+
+#Linux/Ubuntu
+sudo apt update
+sudo apt install make
+sudo apt install build-essential
+
+#Windows (install Chocolatey - https://chocolatey.org/install)
+choco install make
+```
 
 ## Run Locally
 
@@ -64,6 +77,17 @@ Build project
 ```
 In the command above, a file located in the `resources` folder with the name `world-map.txt` will be loaded and define the cities. 10 aliens will be created. Each aliens will "move" at max 30 times between this cities.
 
+### Test
+
+You may run the tests for this application by running the following commands:
+
+```shell
+go test ./...
+```
+
+### Regenerate Mocks
+
+You can regenerate the mocks by running `make generate-mocks`
 
 ## Authors
 
