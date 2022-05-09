@@ -2,11 +2,11 @@ package engine
 
 import (
 	goerrors "errors"
+	"fmt"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/internal/errors"
 	"github.com/thiduzz/code-kata-invasion/internal/nodes"
 	"github.com/thiduzz/code-kata-invasion/tools"
-	"log"
 )
 
 type Engine struct {

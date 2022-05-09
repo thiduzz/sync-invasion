@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"github.com/thiduzz/code-kata-invasion/internal/constant"
 	"github.com/thiduzz/code-kata-invasion/internal/engine"
 	localError "github.com/thiduzz/code-kata-invasion/internal/errors"
@@ -43,6 +44,7 @@ func main() {
 	if err := engineExecutor.Start(); err != nil {
 		throwError(err, flags)
 	}
+	fmt.Println(engineExecutor.Locations)
 }
 
 func validateInput(path *string) error {
